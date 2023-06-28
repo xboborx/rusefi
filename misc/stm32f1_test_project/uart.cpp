@@ -22,7 +22,6 @@ static const UARTConfig uartCfg =
     .cr1 = 0,
     .cr2 = 0,
     .cr3 = 0,
-    .rxhalf_cb = nullptr,
 };
 
 static char printBuffer[200];
@@ -39,7 +38,7 @@ static void UartThread(void*)
 
         pokeConfiguration();
 
-        chThdSleepMilliseconds(200);
+        chThdSleepMilliseconds(500);
     }
 }
 

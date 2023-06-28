@@ -1,6 +1,8 @@
 #include "hal.h"
 #include "persistence.h"
 
+mfs_nocache_buffer_t __nocache_mfsbuf1;
+
 static const MFSConfig mfscfg_1k = {
   .flashp           = (BaseFlash *)&EFLD1,
   .erased           = 0xFFFFFFFFU,
@@ -47,7 +49,7 @@ int InitConfiguration() {
     /* Starting EFL driver.*/
     eflStart(&EFLD1, NULL);
 
-    mfsObjectInit(&mfs1);
+    mfsObjectInit(&mfs1, &__nocache_mfsbuf1);
 
 #define FLASH_SIZE_IN_K_ADDRESS     0x1FFFF7E0
     int flashSize = (*(uint16_t*)FLASH_SIZE_IN_K_ADDRESS);
