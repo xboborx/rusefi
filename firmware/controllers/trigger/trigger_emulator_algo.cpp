@@ -98,20 +98,24 @@ void setTriggerEmulatorRPM(int rpm) {
 	 * All we need to do here is to change the periodMs
 	 * togglePwmState() would see that the periodMs has changed and act accordingly
 	 */
-	if (rpm == 0) {
-		triggerEmulatorSignals[0].setFrequency(NAN);
-	} else {
+	float rPerSecond = NAN;
+	if (rpm != 0) {
 		float rpmM = getRpmMultiplier(getEngineRotationState()->getOperationMode());
-		float rPerSecond = rpm * rpmM / 60.0; // per minute converted to per second
-		triggerEmulatorSignals[0].setFrequency(rPerSecond);
+		rPerSecond = rpm * rpmM / 60.0; // per minute converted to per second
 	}
+	for (int ch = 0; ch < NUM_EMULATOR_CHANNELS; ch++) {
+		triggerEmulatorSignals[ch].setFrequency(rPerSecond);
+	}
+
 	engine->resetEngineSnifferIfInTestMode();
 
 	efiPrintf("Emulating position sensor(s). RPM=%d", rpm);
 }
 
 static void updateTriggerWaveformIfNeeded(PwmConfig *state) {
-	for (int ch = 0; ch < 1; ch++) {
+	for (int ch = 0; ch < NUM_EMULATOR_CHANNELS; ch++) {
+		if (state != &triggerEmulatorSignals[ch])
+			continue;
 		if (atTriggerVersions[ch] < triggerEmulatorWaveforms[ch]->version) {
 			atTriggerVersions[ch] = triggerEmulatorWaveforms[ch]->version;
 			efiPrintf("Stimulator: updating trigger shape for ch%d: %d/%d %d", ch, atTriggerVersions[ch],
@@ -136,9 +140,13 @@ static void emulatorApplyPinState(int stateIndex, PwmConfig *state) /* pwm_gen_c
 		/**
 		 * this callback would invoke the input signal handlers directly
 		 */
-		helper.handleEmulatorCallback(0,
+		for (int ch = 0; ch < NUM_EMULATOR_CHANNELS; ch++) {
+			if (state != &triggerEmulatorSignals[ch])
+				continue;
+			helper.handleEmulatorCallback(ch,
 				*state->multiChannelStateSequence,
 				stateIndex);
+		}
 	}
 
 #if EFI_PROD_CODE
@@ -255,7 +263,7 @@ void stopTriggerEmulatorPins() {
 			continue;
 		for (size_t i = 0; i < efi::size(emulatorOutputs[ch]); i++) {
 			if (isConfigurationChanged(triggerSimulatorPins[i])) {
-				triggerEmulatorSignals[ch].outputPins[i]->deInit();
+				triggerEmulatorSignal.outputPins[i]->deInit();
 			}
 		}
 	}
