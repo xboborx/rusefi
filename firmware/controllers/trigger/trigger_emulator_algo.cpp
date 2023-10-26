@@ -58,7 +58,7 @@ void TriggerEmulatorHelper::handleEmulatorCallback(int ch, const MultiChannelSta
 			if (ch == 0) {
 				handleShaftSignal(i, isRise, stamp);
 			} else {
-				handleVvtCamSignal(isRise ? TriggerValue::RISE : TriggerValue::FALL, stamp, INDEX_BY_BANK_CAM(ch - 1, i));
+		//		handleVvtCamSignal(isRise ? TriggerValue::RISE : TriggerValue::FALL, stamp, INDEX_BY_BANK_CAM(ch - 1, i));
 			}
 		}
 	}
@@ -163,7 +163,7 @@ static void startSimulatedTriggerSignal() {
 
 	setTriggerEmulatorRPM(engineConfiguration->triggerSimulatorRpm);
 
-	for (int ch = 0; ch < 1; ch++) {
+	for (int ch = 0; ch < NUM_EMULATOR_CHANNELS; ch++) {
 		TriggerWaveform *s = triggerEmulatorWaveforms[ch];
 		if (s->getSize() == 0)
 			continue;
@@ -196,7 +196,7 @@ void enableExternalTriggerStimulator() {
 
 void disableTriggerStimulator() {
 	engine->triggerCentral.directSelfStimulation = false;
-	for (int ch = 0; ch < 1; ch++) {
+	for (int ch = 0; ch < NUM_EMULATOR_CHANNELS; ch++) {
 		triggerEmulatorSignals[ch].stop();
 	}
 	hasInitTriggerEmulator = false;
@@ -223,7 +223,7 @@ void initTriggerEmulator() {
 
 void startTriggerEmulatorPins() {
 	hasStimPins = false;
-	for (int ch = 0; ch < 1; ch++) {
+	for (int ch = 0; ch < NUM_EMULATOR_CHANNELS; ch++) {
 		for (size_t i = 0; i < efi::size(emulatorOutputs[ch]); i++) {
 			triggerEmulatorSignals[ch].outputPins[i] = &emulatorOutputs[ch][i];
 
