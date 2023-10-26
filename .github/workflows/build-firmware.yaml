@@ -114,7 +114,6 @@ jobs:
             f407-discovery,
             f429-discovery,
             core8,
-            48way,
             atlas,
             tdg-pdm8,
         ]
