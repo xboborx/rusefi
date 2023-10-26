@@ -23,6 +23,11 @@ Gpio getWarningLedPin() {
 	return Gpio::Unassigned;
 }
 
+Gpio getCommsLedPin() {
+	// this board has no comms led
+	return Gpio::Unassigned;
+}
+
 Gpio getRunningLedPin() {
 	return Gpio::Unassigned;
 }

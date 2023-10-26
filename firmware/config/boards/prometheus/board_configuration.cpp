@@ -25,11 +25,6 @@ Gpio getWarningLedPin() {
 	return Gpio::Unassigned;
 }
 
-Gpio getRunningLedPin() {
-	// this board has no running led
-	return Gpio::Unassigned;
-}
-
 static void setPrometheusDefaults() {
 	engineConfiguration->useCicPidForIdle = true;
 
@@ -208,7 +203,6 @@ void setBoardDefaultConfiguration() {
 	engineConfiguration->sdCardCsPin = Gpio::A2;
 	engineConfiguration->isSdCardEnabled = true;
 }
-
 
 Gpio getRunningLedPin() {
 	return Gpio::A13; //Gpio::A13; // yellow LED
